@@ -7,7 +7,6 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    mysql (2.8.1)
     require (0.2.1)
 
 PLATFORMS
@@ -15,5 +14,4 @@ PLATFORMS
 
 DEPENDENCIES
   acts_as_archive!
-  mysql
   require (= 0.2.1)
