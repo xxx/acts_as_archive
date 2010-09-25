@@ -12,7 +12,8 @@ module ActsAsArchive
       module ClassMethods
         
         def copy_from_archive(conditions)
-          add_conditions!(where = '', conditions)
+          where = sanitize_sql(conditions)
+          where = "WHERE #{where}" unless where.blank?
           col_names = column_names - [ 'deleted_at' ]
           col_names.map! { |col| connection.quote_column_name(col) }
           connection.execute(%{

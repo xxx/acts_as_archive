@@ -14,7 +14,11 @@ describe ActsAsArchive::Base::Destroy do
     end
     
     it "should really delete all records" do
+      Article.count.should == 5
+      Article::Archive.count.should == 0
+      
       Article.delete_all!
+      
       Article.count.should == 0
       Article::Archive.count.should == 0
     end
@@ -28,9 +32,10 @@ describe ActsAsArchive::Base::Destroy do
       @article = Article.first
     end
 
-    it "should really destroy a records" do
-      @article.destroy!
-      Article::Archive.count.should == 0
+    it "should really destroy a record" do
+      lambda {
+        @article.destroy!
+      }.should_not change(Article::Archive, :count)
     end
 
   end

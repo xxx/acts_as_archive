@@ -1,8 +1,10 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../require")
 Require.lib!
 
+ActiveRecord::Base.send(:include, ActsAsArchive::Base)
+ActiveRecord::Migration.send(:include, ActsAsArchive::Migration)
+
 module ActsAsArchive
-  
   def self.update(*models)
     models.each do |klass|
       if klass.respond_to?(:acts_as_archive?) && klass.acts_as_archive?

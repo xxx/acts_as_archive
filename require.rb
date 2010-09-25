@@ -3,7 +3,7 @@ gem 'require'
 require 'require'
 
 Require do
-  gem(:activerecord) { require 'active_record' }
+  gem(:activerecord, '~> 3.0') { require 'active_record' }
   gem :require, '=0.2.1'
   gem(:rake, '=0.8.7') { require 'rake' }
   gem :rspec, '=1.3.0'
@@ -44,6 +44,6 @@ Require do
     require 'logger'
     require 'yaml'
     require 'pp'
-    require 'rails/init'
+    require 'acts_as_archive'
   end
 end

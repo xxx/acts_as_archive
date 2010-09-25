@@ -5,3 +5,5 @@ coverage
 pkg
 spec/db/log/*.log
 tmp
+.bundle/
+.idea/

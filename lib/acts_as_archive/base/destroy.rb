@@ -5,19 +5,29 @@ module ActsAsArchive
       def self.included(base)
         unless base.included_modules.include?(InstanceMethods)
           base.class_eval do
-            alias_method :destroy_without_callbacks!, :destroy_without_callbacks
-            class <<self
+            alias_method :delete!, :delete
+            
+            class << self
               alias_method :delete_all!, :delete_all
             end
+            
+            before_destroy Proc.new { |r|
+              unless r.new_record?
+                r.class.copy_to_archive("#{r.class.primary_key} = #{r.id}", false, false)
+              end
+            }
+      
           end
-          base.send :extend, ClassMethods
+          
           base.send :include, InstanceMethods
+          base.send :extend, ClassMethods
         end
       end
 
       module ClassMethods
-        def copy_to_archive(conditions, import=false)
-          add_conditions!(where = '', conditions)
+        def copy_to_archive(conditions, import = false, delete = true)
+          where = sanitize_sql(conditions)
+          where = "WHERE #{where}" unless where.blank?
           insert_cols = column_names.clone
           select_cols = column_names.clone
           if insert_cols.include?('deleted_at')
@@ -38,7 +48,7 @@ module ActsAsArchive
               FROM #{table_name}
               #{where}
           })
-          connection.execute("DELETE FROM #{table_name} #{where}")
+          connection.execute("DELETE FROM #{table_name} #{where}") if delete
         end
       
         def delete_all(conditions=nil)
@@ -47,23 +57,16 @@ module ActsAsArchive
       end
 
       module InstanceMethods
-        def destroy_without_callbacks
+        def delete
           unless new_record?
             self.class.copy_to_archive("#{self.class.primary_key} = #{id}")
           end
           @destroyed = true
           freeze
         end
-
+        
         def destroy!
-          transaction { destroy_with_callbacks! }
-        end
-
-        def destroy_with_callbacks!
-          return false if callback(:before_destroy) == false
-          result = destroy_without_callbacks!
-          callback(:after_destroy)
-          result
+          transaction { delete! }
         end
       end
     end
