@@ -17,8 +17,6 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{Don't delete your records, move them to a different table}
 
-  s.add_development_dependency 'mysql'
-
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
