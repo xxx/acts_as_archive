@@ -1,6 +1,6 @@
 module ActsAsArchive
   module Migration
-    
+
     def self.included(base)
       unless base.included_modules.include?(InstanceMethods)
         base.send :extend, ClassMethods
@@ -14,9 +14,9 @@ module ActsAsArchive
         end
       end
     end
-    
+
     module ClassMethods
-      
+
       def method_missing_with_archive(method, *arguments, &block)
         args = Marshal.load(Marshal.dump(arguments))
         method_missing_without_archive(method, *arguments, &block)
@@ -40,9 +40,10 @@ module ActsAsArchive
             connection.send(method, *args, &block)
           end
         end
+        args[0]
       end
     end
-    
+
     module InstanceMethods
     end
   end
